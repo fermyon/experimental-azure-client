@@ -1,0 +1,54 @@
+name: Build and Push Azure Client Package
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:     
+      - name: set the release version (tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: echo "RELEASE_VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+
+      - name: set the release version (main)
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        run: echo "RELEASE_VERSION=canary" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v3
+
+      - name: setup spin
+        uses: fermyon/actions/spin/setup@v1
+        with:
+          github_token: ${{ github.token }}
+
+      - name: install go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.22"
+
+      - name: install tinygo
+        uses: rajatjindal/setup-actions/tinygo@v0.0.1
+        with:
+          version: "v0.32.0"
+
+      - name: install wkg
+        run: cargo install --git https://github.com/bytecodealliance/wasm-pkg-tools wkg --locked --config net.git-fetch-with-cli=true
+      
+      - name: build spinapp
+        run: spin build
+      
+      - name: login to GitHub container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: push package
+        run: wkg oci push ghcr.io/fermyon/wasm-pkg/fermyon-experimental/azure-client:${{ env.RELEASE_VERSION }} main.wasm
