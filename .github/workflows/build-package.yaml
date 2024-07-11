@@ -39,6 +39,10 @@ jobs:
 
       - name: install wkg
         run: cargo install --git https://github.com/bytecodealliance/wasm-pkg-tools wkg --locked --config net.git-fetch-with-cli=true
+
+      
+      - name: cache the wkg installation for the next time this runs
+        uses: Swatinem/rust-cache@v2
       
       - name: build spinapp
         run: spin build
