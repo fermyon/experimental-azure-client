@@ -30,16 +30,29 @@ Although Spin offers some amazing features, there are some situations for which 
 In the `spin.toml` file of the Spin application to which you want to add the Azure component, you'll need to tell Spin that you want the component to be part of your app, and you'll need to give your application permission to make HTTP calls to the Azure component:
 
 ```toml
+# Don't forget that the main application needs to have permission to access the Azure client component, so don't forget to add either 'http://localhost:3000' or 'http://name-of-azure-component.spin.internal' as an allowed outbound host (see https://developer.fermyon.com/spin/v2/http-outbound#local-service-chaining for more details)
+
+[variables]
+az_account_name = { required = true, secret = true }
+az_shared_key = { required = true, secret = true }
+
 [[trigger.http]]
-# See article on structuring Spin applications: https://developer.fermyon.com/spin/v2/spin-application-structure
-route = "/desired/route/for/azure/component/..."
+# For defining a custom route, see article on structuring Spin applications: https://developer.fermyon.com/spin/v2/spin-application-structure
+route = "/..."
 component = "name-of-azure-component"
 
-[[component.name-of-azure-component]]
+[component.name-of-azure-component]
 # Be sure to use the current version of the package. 
-source = { registry = "fermyon.com", package = "fermyon-experimental:azure-client", version = "1.0.0" }
-# See article on local service chaining: https://developer.fermyon.com/spin/v2/http-outbound#local-service-chaining
-allowed_outbound_hosts = ["http://name-of-azure-component.spin.internal"]
+source = { registry = "fermyon.com", package = "fermyon-experimental:azure-client", version = " 0.1.0" }
+# If the app needs to access multiple storage accounts, use "https://*.{{blob|queue}}.core.windows.net"
+allowed_outbound_hosts = [
+    "https://{{ az_account_name }}.blob.core.windows.net", 
+    "https://{{ az_account_name }}.queue.core.windows.net",
+]
+
+[component.name-of-azure-component.variables]
+az_account_name = "{{ az_account_name }}"
+az_shared_key = "{{ az_shared_key }}"
 ```
 
 Once these entries have been added to the `spin.toml` file, you can run `spin build`.
