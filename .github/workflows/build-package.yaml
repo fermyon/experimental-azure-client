@@ -53,6 +53,7 @@ jobs:
 
       - name: install wkg
         run: cargo install --git https://github.com/bytecodealliance/wasm-pkg-tools wkg --locked --config net.git-fetch-with-cli=true --force
+        if: steps.cache-cargo-bin.outputs.cache-hit != 'true'
       
       - name: build spinapp
         run: spin build
