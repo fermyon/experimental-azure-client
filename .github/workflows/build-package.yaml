@@ -27,30 +27,12 @@ jobs:
         uses: rajatjindal/setup-actions/tinygo@v0.0.1
         with:
           version: "v0.32.0"
+      
+      - name: cofiguring rust toolchain version
+        run: rustup toolchain install stable --profile minimal
 
-      - name: Cache Cargo registry
-        uses: actions/cache@v3
-        with:
-          path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/*.rs') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-registry-
-
-      - name: Cache Cargo index
-        uses: actions/cache@v3
-        with:
-          path: ~/.cargo/index
-          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/*.rs') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-index-
-
-      - name: Cache Cargo build
-        uses: actions/cache@v3
-        with:
-          path: target
-          key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/*.rs') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-build-
+      - name: setting up the cache
+        uses: Swatinem/rust-cache@v2
 
       - name: install wkg
         run: cargo install --git https://github.com/bytecodealliance/wasm-pkg-tools wkg --locked --config net.git-fetch-with-cli=true
