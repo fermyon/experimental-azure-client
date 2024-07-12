@@ -31,8 +31,25 @@ jobs:
       - name: cofiguring rust toolchain version
         run: rustup toolchain install stable --profile minimal
 
-      - name: setting up the cache
-        uses: Swatinem/rust-cache@v2
+      - name: cache cargo registry and git index
+        id: cache-cargo-registry
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('install-script.sh') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-registry-
+
+      - name: cache cargo binaries
+        id: cache-cargo-bin
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/bin
+          key: ${{ runner.os }}-cargo-bin-${{ hashFiles('install-script.sh') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-bin-
 
       - name: install wkg
         run: cargo install --git https://github.com/bytecodealliance/wasm-pkg-tools wkg --locked --config net.git-fetch-with-cli=true

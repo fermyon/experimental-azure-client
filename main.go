@@ -43,7 +43,9 @@ func init() {
 			return
 		}
 
-		uriPath := r.URL.Path
+		// This gets the vital portions of the uri path, while excluding the route path defined in the spin.toml file
+		//See https://developer.fermyon.com/spin/v2/http-trigger#additional-request-information
+		uriPath := r.Header.Get("spin-path-info")
 		queryString := r.URL.RawQuery
 		endpoint := fmt.Sprintf("https://%s.%s.core.windows.net", accountName, service)
 

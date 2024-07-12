@@ -12,7 +12,7 @@ az_shared_key = { required = true, secret = true }
 
 
 [[trigger.http]]
-route = "/azure-client/..."
+route = "/..."
 component = "go-azure"
 
 [component.go-azure]
