@@ -52,7 +52,7 @@ jobs:
             ${{ runner.os }}-cargo-bin-
 
       - name: install wkg
-        run: cargo install --git https://github.com/bytecodealliance/wasm-pkg-tools wkg --locked --config net.git-fetch-with-cli=true
+        run: cargo install --git https://github.com/bytecodealliance/wasm-pkg-tools wkg --locked --config net.git-fetch-with-cli=true --force
       
       - name: build spinapp
         run: spin build
