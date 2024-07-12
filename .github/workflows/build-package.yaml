@@ -12,7 +12,7 @@ jobs:
     steps:     
 
       - name: set the release version
-        run: echo "RELEASE_VERSION=$(yq '.application.version' spin.toml)" >> $GITHUB_ENV
+        run: RELEASE_VERSION=$(yq '.application.version' spin.toml)
 
       - uses: actions/checkout@v3
 
@@ -54,4 +54,4 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: push package
-        run: wkg oci push ghcr.io/fermyon/wasm-pkg/fermyon-experimental/azure-client:${{ env.RELEASE_VERSION }} main.wasm
+        run: wkg oci push ghcr.io/fermyon/wasm-pkg/fermyon-experimental/azure-client:$RELEASE_VERSION main.wasm
