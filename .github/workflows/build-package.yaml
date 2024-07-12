@@ -31,10 +31,6 @@ jobs:
         with:
           version: "v0.32.0"
 
-      - name: install wkg
-        run: cargo install --git https://github.com/bytecodealliance/wasm-pkg-tools wkg --locked --config net.git-fetch-with-cli=true
-
-      
       - name: Cache Cargo registry
         uses: actions/cache@v3
         with:
@@ -42,6 +38,25 @@ jobs:
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-registry-
+
+      - name: Cache Cargo index
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/index
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-index-
+
+      - name: Cache Cargo build
+        uses: actions/cache@v3
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-build-
+
+      - name: install wkg
+        run: cargo install --git https://github.com/bytecodealliance/wasm-pkg-tools wkg --locked --config net.git-fetch-with-cli=true
       
       - name: build spinapp
         run: spin build
