@@ -24,7 +24,7 @@ locals {
 
 resource "azurerm_resource_group" "demo" {
   name     = "rg-${local.base_name}"
-  location = "West US 2"
+  location = var.location
 }
 
 resource "azurerm_storage_account" "demo" {
