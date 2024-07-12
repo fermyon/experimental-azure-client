@@ -66,4 +66,4 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: push package
-        run: RELEASE_VERSION=$(yq '.application.version' spin.toml) wkg oci push ghcr.io/fermyon/wasm-pkg/fermyon-experimental/azure-client:$RELEASE_VERSION main.wasm
+        run: RELEASE_VERSION=$(yq '.application.version' spin.toml) && wkg oci push ghcr.io/fermyon/wasm-pkg/fermyon-experimental/azure-client:$RELEASE_VERSION main.wasm
