@@ -186,3 +186,14 @@ curl \
     --data-binary @path/to/your/xml/message \
     http://127.0.0.1:3000/your-queue-name/messages
 ```
+
+# Testing
+
+### Requirements
+
+- Latest version of [TinyGo](https://tinygo.org/getting-started/install/)
+- Latest version of [wasmtime](https://docs.wasmtime.dev/cli-install.html)
+
+### Running the tests
+
+In your terminal, in the root directory of the code files, run `make test`. 

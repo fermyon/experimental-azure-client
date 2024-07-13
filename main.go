@@ -1,5 +1,7 @@
 package main
 
+// This was built using the Azure API documentation: https://learn.microsoft.com/en-us/rest/api/storageservices/authorize-with-shared-key
+
 import (
 	"bytes"
 	"crypto/hmac"
@@ -163,6 +165,8 @@ func buildStringToSign(c *AZCredentials, req *http.Request) (string, error) {
 	return stringToSign, nil
 }
 
+// buildCanonicalizedHeader retrieves all headers which start with 'x-ms-' and creates a lexicographically sorted string:
+// x-ms-header-a:foo,\nx-ms-header-b:bar,\nx-ms-header-0:baz\n
 func buildCanonicalizedHeader(headers http.Header) string {
 	cm := map[string][]string{}
 	for k, v := range headers {
@@ -225,6 +229,7 @@ func buildCanonicalizedResource(c *AZCredentials, u *url.URL) (string, error) {
 	return cr.String(), nil
 }
 
+// sendAzureRequest was built to interact with the Blob Storage and Storage Queue services. Please see Microsoft's documentation for other Azure services: https://learn.microsoft.com/en-us/rest/api/azure/
 func sendAzureRequest(req *http.Request, now time.Time, accountName, sharedKey, service string) (*http.Response, error) {
 	cred, err := parseAZCredentials(accountName, sharedKey, service)
 	if err != nil {
