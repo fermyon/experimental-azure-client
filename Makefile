@@ -1,3 +1,3 @@
 .PHONY: test
 test:
-	tinygo test -target wasi -v
+	go test -v ./azure

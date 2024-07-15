@@ -1,4 +1,4 @@
-package main
+package azure
 
 import (
 	"io"
@@ -30,20 +30,29 @@ func TestParseAZCredentials(t *testing.T) {
 	}, {
 		name:          "non-base64 encoded account key",
 		accountName:   "testaccount",
-		accountKey:    "T3=$stK3y@", // Contains characters not in (A-Z, a-z, 0-9, +, /), and the length of the string is not a multiple of four, and there's a misplaced padding character.
+		accountKey:    "T3=$stK3y@", // Contains characters not in (A-Z, a-z, 0-9, +, /), and the length of the string is not a multiple of four, and there's a misplaced padding (=) character.
 		service:       "testservice",
 		expectedCreds: nil,
 		expectedError: true,
 	}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			creds, err := parseAZCredentials(tt.accountName, tt.accountKey, tt.service)
-			if creds != tt.expectedCreds {
-				t.Errorf("got: %v, want: %v", creds, tt.expectedCreds)
-			}
+			creds, err := ParseAZCredentials(tt.accountName, tt.accountKey, tt.service)
 
 			if (tt.expectedError && err == nil) || (!tt.expectedError && err != nil) {
 				t.Errorf("got: %v, want: %v", err, tt.expectedError)
+			} else if !tt.expectedError {
+				if string(creds.AccountKey) != string(tt.expectedCreds.AccountKey) {
+					t.Errorf("got: %v, want: %v", string(creds.AccountKey), string(tt.expectedCreds.AccountKey))
+				}
+
+				if creds.AccountName != tt.expectedCreds.AccountName {
+					t.Errorf("got: %v, want: %v", creds.AccountName, tt.expectedCreds.AccountName)
+				}
+
+				if creds.Service != tt.expectedCreds.Service {
+					t.Errorf("got: %v, want: %v", creds.Service, tt.expectedCreds.Service)
+				}
 			}
 		})
 	}
@@ -69,7 +78,7 @@ func TestComputeHMACSHA256(t *testing.T) {
 	}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			str, err := computeHMACSHA256(tt.creds, tt.message)
+			str, err := ComputeHMACSHA256(tt.creds, tt.message)
 
 			if str != tt.expectedString {
 				t.Errorf("got: %v, want: %v", str, tt.expectedString)
@@ -109,12 +118,12 @@ func TestBuildStringToSign(t *testing.T) {
 		"Content-Type":  "test/type",
 	})
 	if err != nil {
-		t.Errorf("unexpected error: %w", err)
+		t.Errorf("unexpected error: %v", err)
 	}
 
 	emptyReq, err := buildReq("GET", "https://localhost:3000", nil, map[string]string{})
 	if err != nil {
-		t.Errorf("unexpected error: %w", err)
+		t.Errorf("unexpected error: %v", err)
 	}
 
 	tests := []struct {
@@ -127,7 +136,7 @@ func TestBuildStringToSign(t *testing.T) {
 		name:           "normal request",
 		creds:          &testCreds,
 		req:            goodReq,
-		expectedString: "GET\n\n\n\n\ntest/type\n\n\n\n\n\n\nx-ms-header-0:baz,\nx-ms-header-a:foo,\nx-ms-header-b:bar\n/testaccount/testpath\nbar:baz\nfoo:bar",
+		expectedString: "GET\n\n\n\n\ntest/type\n\n\n\n\n\n\nx-ms-header-0:baz\nx-ms-header-a:foo\nx-ms-header-b:bar\n/testaccount/testpath\nbar:baz\nfoo:bar",
 		expectedError:  false,
 	}, {
 		name:           "empty headers",
@@ -138,7 +147,7 @@ func TestBuildStringToSign(t *testing.T) {
 	}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			str, err := buildStringToSign(tt.creds, tt.req)
+			str, err := BuildStringToSign(tt.creds, tt.req)
 			if str != tt.expectedString {
 				t.Errorf("got: %v, want: %v", str, tt.expectedString)
 			}
