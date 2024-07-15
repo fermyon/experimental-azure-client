@@ -7,13 +7,26 @@ on:
       - "v*"
 
 jobs:
-  build:
+  build-on-pull-request:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: install go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.22"
+        
+        - name: run unit tests
+          run: make test
+
+  build-on-push:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:     
 
       - uses: actions/checkout@v3
 
-      - name: setup spin
+      - name: install spin
         uses: fermyon/actions/spin/setup@v1
         with:
           github_token: ${{ github.token }}
@@ -27,6 +40,9 @@ jobs:
         uses: rajatjindal/setup-actions/tinygo@v0.0.1
         with:
           version: "v0.32.0"
+      
+      - name: run unit tests
+        run: make test
       
       - name: cofiguring rust toolchain version
         run: rustup toolchain install stable --profile minimal

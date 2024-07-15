@@ -1,4 +1,4 @@
-module example
+module github.com/fermyon/experimental-azure-client
 
 go 1.22
 
