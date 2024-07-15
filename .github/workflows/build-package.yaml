@@ -5,9 +5,19 @@ on:
       - main
     tags:
       - "v*"
+    paths:
+      - 'main.go'
+      - 'go.mod'
+      - 'go.sum'
+      - 'spin.toml'
+      - 'azure/**'
+      - '.github/workflows/**'
+  pull_request:
+    branches: 
+      - main
 
 jobs:
-  build-on-pull-request:
+  test-on-pull-request:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
