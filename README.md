@@ -146,13 +146,8 @@ curl \
     -H 'x-az-service: blob' \
     --data-binary @/path/to/file \
     http://127.0.0.1:3000/container-name/path/to/your/blob
-```
+```- Latest version of [Go](https://go.dev/doc/install)
 
-## List queues:
-
-```bash
-curl \
-    -H 'x-az-service: queue' \
     "http://127.0.0.1:3000?comp=list"
 ```
 ## Get queue messages:
@@ -191,8 +186,7 @@ curl \
 
 ### Requirements
 
-- Latest version of [TinyGo](https://tinygo.org/getting-started/install/)
-- Latest version of [wasmtime](https://docs.wasmtime.dev/cli-install.html)
+- Latest version of [Go](https://go.dev/doc/install)
 
 ### Running the tests
 
