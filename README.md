@@ -1,8 +1,12 @@
 # Overview
 
-If you have code running as an Azure function, this guide will show you how to transform it into a portable application with sub-millisecond start up time that connects to your existing Azure resources (using a Spin developer tool).
+If you have code running as an Azure Function, this guide will show you how to transform it into a portable, WebAssembly-powered application with sub-millisecond start up time that connects to your existing Azure resources (using the Spin developer tool).
 
 This repository contains the source code for the [WebAssembly component](https://github.com/orgs/fermyon/packages/container/package/wasm-pkg%2Ffermyon-experimental%2Fazure-client) we created which formats and signs HTTP calls in the way Azure requires. We have also provided Terraform that will deploy an example Storage Container and Queue instance in Azure.
+
+### How to get help
+
+We understand that integrating a new technology can be challenging. If you have questions or feedback, reach out to us on our [Discord channel](https://www.fermyon.com/blog/fermyon-discord).
 
 ### Prerequisites
 
