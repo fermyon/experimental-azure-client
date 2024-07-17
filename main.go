@@ -79,7 +79,7 @@ func init() {
 		resp.Body.Close()
 
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-			http.Error(w, fmt.Sprintf("Response from outbound http request is not OK:\n%v\n%v", resp.Status, string(body)), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("Response from outbound http request is not OK:\n%v\n%v", resp.Status, string(body)), http.StatusBadRequest)
 			return
 		}
 

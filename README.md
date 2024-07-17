@@ -1,10 +1,16 @@
 # Overview
 
+If you have code running as an Azure Function, this guide will show you how to transform it into a portable, WebAssembly-powered application with sub-millisecond start up time that connects to your existing Azure resources (using the Spin developer tool).
+
 This repository contains the source code for the [WebAssembly component](https://github.com/orgs/fermyon/packages/container/package/wasm-pkg%2Ffermyon-experimental%2Fazure-client) we created which formats and signs HTTP calls in the way Azure requires. We have also provided Terraform that will deploy an example Storage Container and Queue instance in Azure.
+
+### How to get help
+
+We understand that integrating a new technology can be challenging. If you have questions or feedback, reach out to us on our [Discord channel](https://www.fermyon.com/blog/fermyon-discord).
 
 ### Prerequisites
 
-We are assuming that you have familiarity with the topics below. If you are missing some familiarity with any of these topics, we have included links to helpful resources. 
+We are assuming that you have familiarity with the topics below. If you are not familiar, we have included links to helpful resources. 
 
 - Interacting progarmmatically with Azure [Blob Storage](https://learn.microsoft.com/en-us/azure/storage/blobs/) and/or [Queue Storage](https://learn.microsoft.com/en-us/azure/storage/queues/) services
 - [Writing](https://developer.fermyon.com/spin/v2/writing-apps), [building](https://developer.fermyon.com/spin/v2/build) and running a Spin application with [environment variables](https://developer.fermyon.com/spin/v2/writing-apps#adding-environment-variables-to-components)
@@ -13,13 +19,13 @@ We are assuming that you have familiarity with the topics below. If you are miss
 
 ### Background
 
-As it currently stands, Spin applications written in Go, Python, and JavaScript are not able to use their respective [Azure](https://github.com/fermyon/spin/issues/2623) SDKs. As a workaround, we have built Spin components that make HTTP calls directly to Azure's API endpoints for object storage and queue services, which can be integrated into a Spin app and accessed via [internal HTTP calls](https://developer.fermyon.com/spin/v2/http-outbound#local-service-chaining).
+As it currently stands, Spin applications written in Go, Python, and JavaScript are not able to use their respective [Azure](https://github.com/fermyon/spin/issues/2623) SDKs. As a workaround, we have built Spin components that make HTTP calls directly to Azure's API endpoints for object storage and queue services, which can be integrated into a Spin app and accessed via internal HTTP calls.
 
 The component was written to interact with Azure's blob and queue storage services. See Azure's [documentation](https://learn.microsoft.com/en-us/rest/api/azure/) for API information on other Azure services. 
 
 ### Benefits of migrating from serverless to Spin
 
-While function-as-a-service products (FaaS) like Azure Functions offer remarkable scalability and simplicity, they are not without their issues. Two significant pain points for FaaS customers are cost, and cold-start times (how long it takes to have the code ready for execution). Spin solves both of these problems by offering [sub-millisecond](https://www.fermyon.com/serverless-guide/speed-and-execution-time) cold-start times, and a significant reduction in cost if deployed using [Fermyon Platform for Kubernetes](https://www.fermyon.com/platform).
+While function-as-a-service products (FaaS) like Azure Functions offer remarkable scalability and simplicity, they are not without their issues. Three significant pain points for FaaS customers are cost, cold-start times (how long it takes to have the code ready for execution), and vendor lock-in (you are forced to use a specific cloud provider because switching will cost too much money and/or time). Spin solves these problems by offering [sub-millisecond](https://www.fermyon.com/serverless-guide/speed-and-execution-time) cold-start times, a significant reduction in cost if deployed using [Fermyon Platform for Kubernetes](https://www.fermyon.com/platform), and cloud-agnostic portability, meaning your applications can be run on any Kubernetes cluster running [SpinKube](https://www.spinkube.dev/).
 
 ### When is Spin not a good alternative to serverless?
 
