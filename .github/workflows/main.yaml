@@ -1,4 +1,4 @@
-name: Build and Push Azure Client Package
+name: Test, build and push Azure client package
 on:
   push:
     branches:
