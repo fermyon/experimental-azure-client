@@ -2,9 +2,9 @@ spin_manifest_version = 2
 
 [application]
 name = "Go Azure"
-# Update with latest version number
+# Update with latest version number (semver)
 version = "0.1.0"
-authors = ["Andrew Steurer <andrew.steurer@fermyon.com>"]
+authors = ["Fermyon Engineering Team <engineering@fermyon.com>"]
 
 [[trigger.http]]
 route = "/..."

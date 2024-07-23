@@ -152,9 +152,6 @@ curl \
     -H 'x-az-service: blob' \
     --data-binary @/path/to/file \
     http://127.0.0.1:3000/container-name/path/to/your/blob
-```- Latest version of [Go](https://go.dev/doc/install)
-
-    "http://127.0.0.1:3000?comp=list"
 ```
 ## Get queue messages:
 
