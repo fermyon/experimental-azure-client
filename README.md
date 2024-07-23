@@ -36,7 +36,7 @@ Although Spin offers some amazing features, there are some situations for which 
 In the `spin.toml` file of the Spin application to which you want to add the Azure component, you'll need to tell Spin that you want the component to be part of your app, and you'll need to give your application permission to make HTTP calls to the Azure component:
 
 ```toml
-# Don't forget that the main application needs to have permission to access the Azure client component, so don't forget to add either 'http://localhost:3000' or 'http://name-of-azure-component.spin.internal' as an allowed outbound host (see https://developer.fermyon.com/spin/v2/http-outbound#local-service-chaining for more details)
+# Don't forget that the main application needs to have permission to access the Azure client component, so don't forget to add either 'http://localhost:3000' or 'http://azure-client.spin.internal' as an allowed outbound host (see https://developer.fermyon.com/spin/v2/http-outbound#local-service-chaining for more details)
 
 [variables]
 az_account_name = { required = true, secret = true }
@@ -45,9 +45,9 @@ az_shared_key = { required = true, secret = true }
 [[trigger.http]]
 # For defining a custom route, see article on structuring Spin applications: https://developer.fermyon.com/spin/v2/spin-application-structure
 route = "/..."
-component = "name-of-azure-component"
+component = "azure-client"
 
-[component.name-of-azure-component]
+[component.azure-client]
 # Be sure to use the current version of the package. 
 source = { registry = "fermyon.com", package = "fermyon-experimental:azure-client", version = " 0.1.0" }
 # If the app needs to access multiple storage accounts, use "https://*.{{blob|queue}}.core.windows.net"
@@ -56,7 +56,7 @@ allowed_outbound_hosts = [
     "https://{{ az_account_name }}.queue.core.windows.net",
 ]
 
-[component.name-of-azure-component.variables]
+[component.azure-client]
 az_account_name = "{{ az_account_name }}"
 az_shared_key = "{{ az_shared_key }}"
 ```
@@ -105,7 +105,7 @@ The curl request examples below are for standalone Azure components. If trying t
 ```golang
 // Place blob
 method := "PUT"
-endpoint := "http://name-of-azure-component.spin.internal/container-name/path/to/your/blob"
+endpoint := "http://127.0.0.1:3000/azure-client/container-name/path/to/your/blob"
 bodyData := []byte("Hello, Azure!")
 
 req, err := http.NewRequest(method, endpoint, bytes.NewReader(bodyData))
@@ -123,7 +123,7 @@ resp, err := spinhttp.Send(req)
 ```bash
 curl \
     -H 'x-az-service: blob' \
-    "http://127.0.0.1:3000/container-name?restype=container&comp=list"
+    "http://127.0.0.1:3000/azure-client/container-name?restype=container&comp=list"
 ```
 
 ## Get blob:
@@ -132,7 +132,7 @@ curl \
 curl \
     -o file_name.extension \
     -H 'x-az-service: blob' \
-    http://127.0.0.1:3000/container-name/path/to/your/blob
+    http://127.0.0.1:3000/azure-client/container-name/path/to/your/blob
 ```
 
 ## Delete blob:
@@ -141,7 +141,7 @@ curl \
 curl \
     --request DELETE \
     -H 'x-az-service: blob' \
-    http://127.0.0.1:3000/container-name/path/to/your/blob
+    http://127.0.0.1:3000/azure-client/container-name/path/to/your/blob
 ```
 
 ## Place blob:
@@ -151,14 +151,14 @@ curl \
     --request PUT \
     -H 'x-az-service: blob' \
     --data-binary @/path/to/file \
-    http://127.0.0.1:3000/container-name/path/to/your/blob
+    http://127.0.0.1:3000/azure-client/container-name/path/to/your/blob
 ```
 ## Get queue messages:
 
 ```bash
 curl \
     -H 'x-az-service: queue' \
-    http://127.0.0.1:3000/your-queue-name/messages
+    http://127.0.0.1:3000/azure-client/your-queue-name/messages
 ```
 
 ## Delete queue message:
@@ -168,7 +168,7 @@ curl \
 curl \
     --request DELETE \
     -H 'x-az-service: queue' \
-    "http://127.0.0.1:3000/your-queue-name/messages/your-message-id?popreceipt=your-pop-receipt-value"
+    "http://127.0.0.1:3000/azure-client/your-queue-name/messages/your-message-id?popreceipt=your-pop-receipt-value"
 ```
 
 ## Place queue message: 
@@ -182,7 +182,7 @@ curl \
     --request POST \
     -H 'x-az-service: queue' \
     --data-binary @path/to/your/xml/message \
-    http://127.0.0.1:3000/your-queue-name/messages
+    http://127.0.0.1:3000/azure-client/your-queue-name/messages
 ```
 
 # Testing
