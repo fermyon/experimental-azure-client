@@ -2,7 +2,7 @@
 
 If you have code running as an Azure Function, this guide will show you how to transform it into a portable, WebAssembly-powered application with sub-millisecond start up time that connects to your existing Azure resources (using the Spin developer tool).
 
-This repository contains the source code for the [WebAssembly component](https://github.com/orgs/fermyon/packages/container/package/wasm-pkg%2Ffermyon-experimental%2Fazure-client) we created which formats and signs HTTP calls in the way Azure requires. We have also provided Terraform that will deploy an example Storage Container and Queue instance in Azure.
+This repository contains the source code for the [WebAssembly component](https://github.com/orgs/fermyon/packages/container/package/wasm-pkg%2Ffermyon-experimental%2Fazure-client) we created which formats and signs HTTP calls in the way Azure requires. We have also provided Terraform (see `/infra`) that will deploy an example Storage Container and Queue instance in Azure.
 
 ### How to get help
 
@@ -36,27 +36,26 @@ Although Spin offers some amazing features, there are some situations for which 
 In the `spin.toml` file of the Spin application to which you want to add the Azure component, you'll need to tell Spin that you want the component to be part of your app, and you'll need to give your application permission to make HTTP calls to the Azure component:
 
 ```toml
-# Don't forget that the main application needs to have permission to access the Azure client component, so don't forget to add either 'http://localhost:3000' or 'http://azure-client.spin.internal' as an allowed outbound host (see https://developer.fermyon.com/spin/v2/http-outbound#local-service-chaining for more details)
+# The main application needs to have permission to access the Azure client component, so don't forget to add either 'http://localhost:3000' or 'http://azure-client.spin.internal' as an allowed outbound host (see https://developer.fermyon.com/spin/v2/http-outbound for more details)
 
 [variables]
 az_account_name = { required = true, secret = true }
 az_shared_key = { required = true, secret = true }
 
 [[trigger.http]]
-# For defining a custom route, see article on structuring Spin applications: https://developer.fermyon.com/spin/v2/spin-application-structure
-route = "/..."
+route = "/azure-client/..."
 component = "azure-client"
 
 [component.azure-client]
 # Be sure to use the current version of the package. 
-source = { registry = "fermyon.com", package = "fermyon-experimental:azure-client", version = " 0.1.0" }
+source = { registry = "fermyon.com", package = "fermyon-experimental:azure-client", version = "0.1.0" }
 # If the app needs to access multiple storage accounts, use "https://*.{{blob|queue}}.core.windows.net"
 allowed_outbound_hosts = [
     "https://{{ az_account_name }}.blob.core.windows.net", 
     "https://{{ az_account_name }}.queue.core.windows.net",
 ]
 
-[component.azure-client]
+[component.azure-client.variables]
 az_account_name = "{{ az_account_name }}"
 az_shared_key = "{{ az_shared_key }}"
 ```
